@@ -1,70 +1,99 @@
-# Getting Started with Create React App
+# react <-----> spring boot 통신
+- localhost:3000/admin/test 로 접속하여 통신 테스트 하기.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react 준비
+- react router dom 설치 되었다는 가정하에
 
-## Available Scripts
+### package.json에 proxy 추가
+- "proxy": "http://localhost:8080",
 
-In the project directory, you can run:
+### axios 설치
+- npm install axios
 
-### `npm start`
+### proxy-middleware 설치
+- npm i http-proxy-middleware
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### src 하위로 setupProxy.js 생성
+```
+const { createProxyMiddleware } = require('http-proxy-middleware');
+module.exports = function(app) {
+   app.use(
+      '/api', // api로 시작하는 모든 요청을 proxy하도록 설정. 혹시 몰라서 추가. /api 경로 사용안한다면 없어도 됨.
+      createProxyMiddleware({
+         target: 'http://localhost:8080',	// 서버 ip or localhost:설정한포트번호
+         changeOrigin: true,
+      })
+   );
+};
+```
+### App.js, TestPage.jsx 파일 참고
+- 그외 테스트 코드는 App.js와 TestPage.jsx 파일 참고하면 된다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# spring boot 준비
 
-### `npm test`
+### build.gradle에 소스코드 추가
+- 나중에 spring boot와 react 같이 빌드할 때 react 프로젝트 먼저 빌드하고 spring boot 프로젝트에 포함시키겠다는 코드.
+- 이건 추가해도 추가 안해도 괜찮을 듯.
+```
+def frontendDir = "$projectDir/src/main/frontend"
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+sourceSets {
+	main {
+		resources { srcDirs = ["$projectDir/src/main/resources"]
+		}
+	}
+}
 
-### `npm run build`
+processResources { dependsOn "copyReactBuildFiles" }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+task installReact(type: Exec) {
+	workingDir "$frontendDir"
+	inputs.dir "$frontendDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine "npm.cmd", "audit", "fix"
+		commandLine 'npm.cmd', 'install' }
+	else {
+		commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
+	}
+}
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+task buildReact(type: Exec) {
+	dependsOn "installReact"
+	workingDir "$frontendDir"
+	inputs.dir "$frontendDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine "npm.cmd", "run-script", "build"
+	} else {
+		commandLine "npm", "run-script", "build"
+	}
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+task copyReactBuildFiles(type: Copy) {
+	dependsOn "buildReact"
+	from "$frontendDir/build"
+	into "$projectDir/src/main/resources/static"
+}
+```
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### WebConfig.java 생성
+- 해당 프로젝트 하위에 WebConfig.java 파일 생성
+- Application.java와 동일한 위치에.
+```
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+   @Override
+   public void addCorsMappings(CorsRegistry registry) {
+       registry.addMapping("/**") // 모든 경로에 대해 CORS 허용
+               .allowedOrigins("http://localhost:3000") // React 앱의 주소
+               .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
+               .allowedHeaders("*") // 모든 헤더 허용
+               .allowCredentials(false); // 인증 정보 허용
+   }
+}
+```
