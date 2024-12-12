@@ -19,6 +19,7 @@
   padding: 20px;
 }
 
+/* 24.12.12 지은 : 주석처리 */
 #AdminMainConatainer #AdminMainContentsWrap {
-  width: 1400px;
+  /* width: 1400px; */
 }
