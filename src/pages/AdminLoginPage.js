@@ -19,36 +19,11 @@ const AdminLoginPage = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ staffUserId, password }),
-                // credentials: 'include',
-                // withCredentials: true, // 추가
+                credentials: 'include',  // 쿠키를 포함하여 요청
             });
-
+    
             if (response.ok) {
-                const data = await response.json();
-                console.log(data); // 데이터값 테스트 확인용.
-                console.log("response ok");
-
-                // 응답에서 토큰 추출
-                const token = data.token;
-                console.log(token);
-
-                // 토큰이 있는지 확인
-                if (!token) {
-                    setError("Token not found in response.");
-                    return;
-                }
-
-                // 토큰을 쿠키에 저장 (만료 시간 설정)
-                Cookies.set('JWT', token, { expires: 1, path: '/' }); // 1일 후 만료
-
-                // 관리자 여부 확인
-                if (data.role === "ADMIN") { // data.roleName아님 data.role임
-                    // 로그인 성공 후 이전 경로로 리디렉션하거나, 기본 경로로 이동
-                    const from = location.state?.from?.pathname || "/admin";
-                    navigate(from, { replace: true });
-                } else {
-                    setError("You are not authorized to access this page.");
-                }
+                navigate('/admin');  // 로그인 성공 후 /admin으로 이동
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || "Invalid credentials.");

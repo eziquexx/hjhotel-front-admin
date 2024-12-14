@@ -31,32 +31,6 @@ export const RouterInfo = [
     path: "/admin",
     element: <AdminPage />,
     errorElement: <ErrorPage />,
-    loader: () => {
-      const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("JWT="))
-          ?.split("=")[1];
-
-      if (token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          // "ADMIN" 역할 및 토큰 만료 여부 확인
-          if (decodedToken.role === "ADMIN" && Date.now() < decodedToken.exp * 1000) {
-            return decodedToken.userId ? decodedToken.userId : decodedToken.staffUserId;
-          } else {
-            // ADMIN 역할이 아니거나 토큰이 만료된 경우 리디렉션
-            return redirect("/admin/login");
-          }
-        } catch (error) {
-          console.error("Error decoding token:", error);
-          // 토큰 디코딩 오류 발생 시 리디렉션
-          return redirect("/admin/login");
-        }
-      } else {
-        // 토큰이 없으면 리디렉션
-        return redirect("/admin/login");
-      }
-    },
     children: [
       {
         index: true,
