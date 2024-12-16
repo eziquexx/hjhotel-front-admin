@@ -38,7 +38,10 @@ export default function AdminRoomContent() {
                 apiUrl = `/roomdetails?${queryParams}`;
             }
 
-            const response = await fetch(`http://localhost:8080/api/admin/rooms${apiUrl}`);
+            const response = await fetch(`http://localhost:8080/api/admin/rooms${apiUrl}`,{
+                method: 'GET', // GET 요청
+                credentials: 'include', // 쿠키를 함께 전송
+              });
             if (!response.ok) throw new Error("Failed to fetch rooms");
 
             const data = await response.json();
@@ -58,6 +61,7 @@ export default function AdminRoomContent() {
                 `http://localhost:8080/api/admin/rooms/details/${roomNumber}/${newStatus}`,
                 {
                     method: "PUT",
+                    credentials: 'include', 
                 }
             );
             if (response.ok) {

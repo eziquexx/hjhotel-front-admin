@@ -32,7 +32,10 @@ export default function AdminRoomTypeContent() {
     const fetchRoomTypes = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:8080/api/admin/rooms/types`);
+            const response = await fetch(`http://localhost:8080/api/admin/rooms/types`,{
+                method: 'GET', // GET 요청
+                credentials: 'include', // 쿠키를 함께 전송
+              });
             if (!response.ok) throw new Error("Failed to fetch room types");
             const data = await response.json();
             setRoomTypes(data);
@@ -45,7 +48,10 @@ export default function AdminRoomTypeContent() {
 
     const fetchAmenities = async (TypeName) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/rooms/types/${TypeName}`);
+            const response = await fetch(`http://localhost:8080/api/admin/rooms/types/${TypeName}`,{
+                method: 'GET', // GET 요청
+                credentials: 'include', // 쿠키를 함께 전송
+              });
             if (!response.ok) {
                 throw new Error("Failed to fetch amenities");
             }
@@ -105,6 +111,7 @@ export default function AdminRoomTypeContent() {
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
+                    credentials: 'include', // 쿠키를 함께 전송
                 }
             );
             if (!response.ok) throw new Error("Failed to update amenity");
@@ -148,6 +155,7 @@ export default function AdminRoomTypeContent() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    credentials: 'include', // 쿠키를 함께 전송
                 },
                 body: JSON.stringify({ ...amenityData, roomTypeId: selectedRoom.roomTypeId }),
             });
