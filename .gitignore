@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 개발 및 운영환경 서버정보
+/src/config.js

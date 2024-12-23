@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 // import useAuthStore from 'src/state/authStore';
+import config from '../../../../config';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ userId: '', password: '' });
@@ -16,7 +17,7 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/login', {
+            const response = await fetch(`${config.API_BASE_URL}/api/users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

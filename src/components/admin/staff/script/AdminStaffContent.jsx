@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import config    from "../../../../config";
 
 export default function AdminStaffContent() {
     const [staffs, setStaffs] = useState([]);
@@ -7,7 +8,7 @@ export default function AdminStaffContent() {
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/admin/staff', {
+                const response = await fetch(`${config.API_BASE_URL}/api/admin/staff`, {
                     credentials: "include", // 쿠키를 요청에 포함
                 });
 

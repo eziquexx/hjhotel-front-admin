@@ -1,3 +1,5 @@
+// npm start 에서 동삭하며 개발 환경에서만 필요
+
 const { createProxyMiddleware } = require("http-proxy-middleware");
 module.exports = function (app) {
   app.use(

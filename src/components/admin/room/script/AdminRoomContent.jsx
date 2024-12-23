@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../css/ToggleSwitch.css";
 import ToggleSwitch from "./comn/ToggleSwitch"; // 토글 버튼 컴포넌트
 import RoomTable from "./comn/RoomTable";
-
+import config from '../../../../config';
 
 export default function AdminRoomContent() {
     const [rooms, setRooms] = useState([]);
@@ -38,7 +38,7 @@ export default function AdminRoomContent() {
                 apiUrl = `/roomdetails?${queryParams}`;
             }
 
-            const response = await fetch(`http://localhost:8080/api/admin/rooms${apiUrl}`,{
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/rooms${apiUrl}`,{
                 method: 'GET', // GET 요청
                 credentials: 'include', // 쿠키를 함께 전송
               });
@@ -58,7 +58,7 @@ export default function AdminRoomContent() {
         const newStatus = newState ? "AVAILABLE" : "OCCUPIED"; // 토글 상태 변경
         try {
             const response = await fetch(
-                `http://localhost:8080/api/admin/rooms/details/${roomNumber}/${newStatus}`,
+                `${config.API_BASE_URL}/api/admin/rooms/details/${roomNumber}/${newStatus}`,
                 {
                     method: "PUT",
                     credentials: 'include', // 쿠키를 함께 전송

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import config from '../../../../config';
 
 // 24.12.10 지은 : payment에서 usePaginationFetch 가져옴.
 export default function usePaginationFetch(urlTest) {
@@ -10,7 +11,7 @@ export default function usePaginationFetch(urlTest) {
   const [totalElements, setTotalElements] = useState(0); // 총 페이지 개수
   const [page, setPage] = useState(1); // 현재 페이지
   const size = 10; // 한 페이지에 표시할 항목 개수
-  const fetchUrl = `http://localhost:8080/api/admin/${urlTest}?page=${page}&size=${size}&sort_order=DESC`;
+  const fetchUrl = `${config.API_BASE_URL}/api/admin/${urlTest}?page=${page}&size=${size}&sort_order=DESC`;
   
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import ButtonEx from "./ButtonEx";
 import "./css/AdminHeader.css";
+import config from '../../config';
 
 //24.11.25 지은 [완료] : AdminHeader 링크 테스트
 export default function AdminHeader() {
@@ -13,7 +14,7 @@ export default function AdminHeader() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8080/api/admin/logout", {
+      await fetch(`${config.API_BASE_URL}/api/admin/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -27,7 +28,7 @@ export default function AdminHeader() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/admin/protected", {
+        const response = await fetch(`${config.API_BASE_URL}/api/admin/protected`, {
           credentials: "include", // 세션 정보를 포함
         });
         if (response.ok) {

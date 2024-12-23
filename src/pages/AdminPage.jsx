@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminHeader from "../components/common/AdminHeader";
 import AdminContents from "../components/common/AdminContents";
+import config from "../config";
 
 const AdminPage = () => {
     const [authorized, setAuthorized] = useState(false);
@@ -18,7 +19,7 @@ const AdminPage = () => {
 
     const handleLogout = async () => {
         try {
-            await fetch("http://localhost:8080/api/admin/logout", {
+            await fetch(`${config.API_BASE_URL}/api/admin/logout`, {
                 method: "POST",
                 credentials: "include",
             });
@@ -33,7 +34,7 @@ const AdminPage = () => {
     useEffect(() => {
         const checkAccess = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/admin/protected", {
+                const response = await fetch(`${config.API_BASE_URL}/api/admin/protected`, {
                     method: "GET",
                     credentials: "include", // JWT 쿠키 자동 포함
                 });

@@ -6,6 +6,7 @@ import AdminNoticeEditModal from "./AdminNoticeEditModal";
 import AdminNoticeEditSuccessModal from "./AdminNoticeEditSuccessModal";
 import AdminNoticeDeleteModal from "./AdminNoticeDeleteModal";
 import AdminNoticeDeleteSuccessModal from "./AdminNoticeDeleteSuccessModal";
+import config from '../../../../config';
 
 export default function AdminNoticeDetailPage() {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function AdminNoticeDetailPage() {
     // 해당 게시글 상세내용 api 호출 함수
     const fetchNotice = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/notices/${noticeId}`,{
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/notices/${noticeId}`,{
                 method: 'GET', // GET 요청
                 credentials: 'include', // 쿠키를 함께 전송
               });
@@ -48,7 +49,7 @@ export default function AdminNoticeDetailPage() {
     useEffect(() => {
         const fetchNotice = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/admin/notices/${noticeId}`,{
+                const response = await fetch(`${config.API_BASE_URL}/api/admin/notices/${noticeId}`,{
                     method: 'GET', // GET 요청
                     credentials: 'include', // 쿠키를 함께 전송
                   });
@@ -88,7 +89,7 @@ export default function AdminNoticeDetailPage() {
     const handleSaveChanges = async () => {
         // 수정된 내용 api 호출해서 db에 저장하기
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/notices/${noticeId}`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/notices/${noticeId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -189,7 +190,7 @@ export default function AdminNoticeDetailPage() {
     // 삭제 api
     const handleDeleteChanges = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/notices/${noticeId}`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/notices/${noticeId}`, {
                 method: "DELETE",
                 credentials: 'include',
             })

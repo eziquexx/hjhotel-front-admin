@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import config from '../config';
 
 const useUserInfo = (isLoggedIn) => {
     const [userInfo, setUserInfo] = useState(null);
@@ -14,7 +15,7 @@ const useUserInfo = (isLoggedIn) => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch('http://localhost:8080/api/admin/admininfo', {
+                const response = await fetch(`${config.API_BASE_URL}/api/admin/admininfo`, {
                     method: 'GET',
                     credentials: 'include',
                 });
